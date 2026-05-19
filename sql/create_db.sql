@@ -1,0 +1,75 @@
+CREATE TABLE IF NOT EXISTS users (
+	id SERIAL NOT NULL,
+	username VARCHAR(255) NOT NULL UNIQUE,
+	email VARCHAR(255) NOT NULL UNIQUE,
+	password_hash VARCHAR(255) NOT NULL,
+	is_admin BOOLEAN DEFAULT FALSE,
+	created_at TIMESTAMP DEFAULT NOW(),
+	PRIMARY KEY(id)
+);
+
+
+
+
+CREATE TABLE IF NOT EXISTS books (
+	id SERIAL NOT NULL,
+	title VARCHAR(255) NOT NULL,
+	author VARCHAR(255) NOT NULL,
+	year INTEGER,
+	language VARCHAR(50),
+	description TEXT,
+	cover_url VARCHAR(500),
+	added_by INTEGER,
+	created_at TIMESTAMP DEFAULT NOW(),
+	PRIMARY KEY(id)
+);
+
+
+
+
+CREATE TABLE IF NOT EXISTS reviews (
+	id SERIAL NOT NULL,
+	user_id INTEGER NOT NULL,
+	book_id INTEGER NOT NULL,
+	rating VARCHAR(20) CHECK(rating IN ('positive', 'negative', 'neutral')),
+	text TEXT,
+	created_at TIMESTAMP DEFAULT NOW(),
+	UNIQUE(user_id, book_id),
+	PRIMARY KEY(id)
+);
+
+
+
+
+CREATE TABLE IF NOT EXISTS reading_statuses (
+	id SERIAL NOT NULL,
+	user_id INTEGER NOT NULL,
+	book_id INTEGER NOT NULL,
+	status VARCHAR(20) NOT NULL CHECK(status IN ('want_to_read', 'reading', 'read')),
+	updated_at TIMESTAMP DEFAULT NOW(),
+	UNIQUE(user_id, book_id),
+	PRIMARY KEY(id)
+);
+
+
+
+ALTER TABLE books
+ADD FOREIGN KEY(added_by) REFERENCES users(id)
+ON UPDATE NO ACTION ON DELETE SET NULL;
+
+ALTER TABLE reviews
+ADD FOREIGN KEY(user_id) REFERENCES users(id)
+ON UPDATE NO ACTION ON DELETE CASCADE;
+
+ALTER TABLE reviews
+ADD FOREIGN KEY(book_id) REFERENCES books(id)
+ON UPDATE NO ACTION ON DELETE CASCADE;
+
+ALTER TABLE reading_statuses
+ADD FOREIGN KEY(user_id) REFERENCES users(id)
+ON UPDATE NO ACTION ON DELETE CASCADE;
+
+ALTER TABLE reading_statuses
+ADD FOREIGN KEY(book_id) REFERENCES books(id)
+ON UPDATE NO ACTION ON DELETE CASCADE;
+

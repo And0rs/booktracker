@@ -68,15 +68,75 @@ def load_user(user_id):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    q = request.args.get('q', '')
+    if q:
+        books = Book.query.filter(
+            Book.title.ilike(f'%{q}%') | Book.author_name.ilike(f'%{q}%')
+        ).all()
+    else:
+        books = Book.query.all()
+    return render_template('index.html', books=books, q=q)
 
-@app.route('/book/<int:id>')
+@app.route('/book/<int:id>', methods=['GET', 'POST'])
 def book_page(id):
-    return render_template('book.html')
+    book = Book.query.get_or_404(id)
+    reviews = Review.query.filter_by(book_id=id).order_by(Review.created_at.desc()).all()
+    status = None
+    if current_user.is_authenticated:
+        status = ReadingStatus.query.filter_by(
+            user_id=current_user.id, book_id=id
+        ).first()
+    if request.method == 'POST':
+        action = request.form.get('action')
+        
+        if action == 'review' and current_user.is_authenticated:
+            existing = Review.query.filter_by(
+                user_id=current_user.id, book_id=id
+            ).first()
+            if not existing:
+                review = Review(
+                    user_id=current_user.id,
+                    book_id=id,
+                    rating=request.form['rating'],
+                    text=request.form.get('text', '')
+                )
+                db.session.add(review)
+                db.session.commit()
+                return redirect(url_for('book_page', id=id))
+        elif action == 'status' and current_user.is_authenticated:
+            if status:
+                status.status = request.form['status']
+                status.updated_at = db.func.now()
+            else:
+                status = ReadingStatus(
+                    user_id=current_user.id,
+                    book_id=id,
+                    status=request.form['status']
+                )
+                db.session.add(status)
+            db.session.commit()
+            return redirect(url_for('book_page', id=id))
+    your_review = current_user.is_authenticated and Review.query.filter_by(
+        user_id=current_user.id, book_id=id
+    ).first()
+    return render_template('book.html', book=book, reviews=reviews, status=status, your_review=bool(your_review))
 
 @app.route('/add-book', methods=['GET', 'POST'])
 @login_required
 def add_book():
+    if request.method == 'POST':
+        book = Book(
+            title=request.form['title'],
+            author_name=request.form['author_name'],
+            year=request.form.get('year', type=int),
+            language=request.form.get('language', ''),
+            description=request.form.get('description', ''),
+            cover_url=request.form.get('cover_url', ''),
+            added_by=current_user.id
+        )
+        db.session.add(book)
+        db.session.commit()
+        return redirect(url_for('book_page', id=book.id))
     return render_template('add_book.html')
 
 @app.route('/profile')

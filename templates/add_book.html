@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Добавить книгу</h1>
+<form method="POST" class="col-md-6">
+    <div class="mb-3">
+        <label class="form-label">Название *</label>
+        <input type="text" name="title" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Автор *</label>
+        <input type="text" name="author_name" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Год издания</label>
+        <input type="number" name="year" class="form-control" min="1000" max="2100">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Язык</label>
+        <input type="text" name="language" class="form-control">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Описание</label>
+        <textarea name="description" class="form-control" rows="4"></textarea>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">URL обложки</label>
+        <input type="url" name="cover_url" class="form-control">
+    </div>
+    <button type="submit" class="btn btn-primary">Добавить</button>
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">Отмена</a>
+</form>
+{% endblock %}

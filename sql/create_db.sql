@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS books (
 	id SERIAL NOT NULL,
 	title VARCHAR(255) NOT NULL,
-	author VARCHAR(255) NOT NULL,
+	author_name VARCHAR(255) NOT NULL,
 	year INTEGER,
 	language VARCHAR(50),
 	description TEXT,

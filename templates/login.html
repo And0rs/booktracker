@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2 class="mb-4" id="form-title">Вход</h2>
+        {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+        <form method="POST">
+        <input type="hidden" name="action" id="action-input" value="login">
+            <div class="mb-3">
+                <label class="form-label">Логин</label>
+                <input type="text" name="username" class="form-control" required>
+            </div>
+            <div class="mb-3" id="email-group" style="display:none;">
+                <label class="form-label">Email</label>
+                <input type="email" name="email" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Пароль</label>
+                <input type="password" name="password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100" id="submit-btn">Войти</button>
+        </form>
+        <p class="mt-3 text-center">
+            <a href="#" onclick="toggleForm()" id="toggle-link">Нет аккаунта? Зарегистрироваться</a>
+        </p>
+    </div>
+</div>
+<script>
+function toggleForm() {
+    event.preventDefault();
+    const title = document.getElementById('form-title');
+    const emailGroup = document.getElementById('email-group');
+    const submitBtn = document.getElementById('submit-btn');
+    const toggleLink = document.getElementById('toggle-link');
+    const actionInput = document.querySelector('input[name="action"]');
+    if (title.textContent === 'Вход') {
+        title.textContent = 'Регистрация';
+        emailGroup.style.display = 'block';
+        submitBtn.textContent = 'Зарегистрироваться';
+        toggleLink.textContent = 'Уже есть аккаунт? Войти';
+        actionInput.value = 'register';
+    } else {
+        title.textContent = 'Вход';
+        emailGroup.style.display = 'none';
+        submitBtn.textContent = 'Войти';
+        toggleLink.textContent = 'Нет аккаунта? Зарегистрироваться';
+        actionInput.value = 'login';
+    }
+}
+</script>
+{% endblock %}
+

@@ -68,14 +68,8 @@ def load_user(user_id):
 
 @app.route('/')
 def index():
-    q = request.args.get('q', '')
-    if q:
-        books = Book.query.filter(
-            Book.title.ilike(f'%{q}%') | Book.author_name.ilike(f'%{q}%')
-        ).all()
-    else:
-        books = Book.query.all()
-    return render_template('index.html', books=books, q=q)
+    books = Book.query.all()
+    return render_template('index.html', books=books)
 
 @app.route('/book/<int:id>', methods=['GET', 'POST'])
 def book_page(id):

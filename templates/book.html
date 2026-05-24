@@ -9,9 +9,9 @@
         <div class="card mb-3">
             <div class="card-body">
                 <h6>Статус чтения</h6>
-                <form method="POST">
+                <form method="POST" novalidate>
                     <input type="hidden" name="action" value="status">
-                    <select name="status" class="form-select" onchange="this.form.submit()">
+                    <select name="status" class="form-select">
                         <option value="">-- выберите --</option>
                         <option value="want_to_read" {% if status and status.status == 'want_to_read' %}selected{% endif %}>Хочу прочитать</option>
                         <option value="reading" {% if status and status.status == 'reading' %}selected{% endif %}>Читаю</option>
@@ -33,10 +33,10 @@
         <h3>Рецензии ({{ reviews|length }})</h3>
         
                 {% if current_user.is_authenticated and not your_review %}
-        <form method="POST" class="mb-4">
+        <form method="POST" class="mb-4" novalidate>
             <input type="hidden" name="action" value="review">
             <div class="mb-2">
-                <select name="rating" class="form-select" required>
+                <select name="rating" class="form-select">
                     <option value="">Оценка</option>
                     <option value="positive">Положительная</option>
                     <option value="neutral">Нейтральная</option>
@@ -67,4 +67,9 @@
         {% endfor %}
     </div>
 </div>
+<script>
+    document.querySelector('select[name="status"]')?.addEventListener('change', function() {
+        if (this.value) this.form.submit();
+});
+</script>
 {% endblock %}

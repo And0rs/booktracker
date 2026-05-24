@@ -1,13 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 <h1>Каталог книг</h1>
-<form class="mb-4" method="GET">
-    <input type="text" name="q" class="form-control" placeholder="Поиск по названию или автору..." value="{{ q }}">
-</form>
+<input type="text" id="search" class="form-control mb-4" placeholder="Поиск...">
 <div class="row">
     {% for book in books %}
-    <div class="col-md-4 mb-3">
-        <div class="card">
+    <div class="col-md-4 mb-3 book-card-wrapper">
+        <div class="card book-card">
             {% if book.cover_url %}
             <img src="{{ book.cover_url }}" class="card-img-top" style="height:200px;object-fit:cover;">
             {% endif %}
@@ -19,7 +17,7 @@
         </div>
     </div>
     {% else %}
-    <p>Книг пока нет.</p>
+    <p id="no-books">Книг пока нет.</p>
     {% endfor %}
 </div>
 {% endblock %}

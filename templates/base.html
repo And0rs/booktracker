@@ -25,6 +25,9 @@
     <div class="container mt-4">
         {% block content %}{% endblock %}
     </div>
+    <script src="{{ url_for('static', filename='js/search.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/add-book.js') }}"></script>
 </body>
 </html>
 

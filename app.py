@@ -142,7 +142,23 @@ def add_book():
 @app.route('/profile')
 @login_required
 def profile():
-    return render_template('profile.html')
+    want = ReadingStatus.query.filter_by(
+        user_id=current_user.id, status='want_to_read'
+    ).all()
+    reading = ReadingStatus.query.filter_by(
+        user_id=current_user.id, status='reading'
+    ).all()
+    read = ReadingStatus.query.filter_by(
+        user_id=current_user.id, status='read'
+    ).all()
+    reviews_count = Review.query.filter_by(user_id=current_user.id).count()
+    return render_template(
+        'profile.html',
+        want=want,
+        reading=reading,
+        read=read,
+        reviews_count=reviews_count
+    )
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -183,5 +199,4 @@ def logout():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
 

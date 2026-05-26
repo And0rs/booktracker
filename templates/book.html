@@ -28,7 +28,7 @@
         <p class="text-muted">
             {{ book.author_name }}{% if book.year %} ({{ book.year }}){% endif %}{% if book.language %}, {{ book.language }}{% endif %}
         </p>
-        {% if book.description %}<p>{{ book.description }}</p>{% endif %} 
+        {% if book.description %}<p class="book-description">{{ book.description }}</p>{% endif %} 
         <hr>
         <h3>Рецензии ({{ reviews|length }})</h3>
         
@@ -36,12 +36,11 @@
         <form method="POST" class="mb-4" novalidate>
             <input type="hidden" name="action" value="review">
             <div class="mb-2">
-                <select name="rating" class="form-select">
-                    <option value="">Оценка</option>
-                    <option value="positive">Положительная</option>
-                    <option value="neutral">Нейтральная</option>
-                    <option value="negative">Отрицательная</option>
-                </select>
+              <select name="rating" class="form-select">
+                 <option value="positive">Положительная</option>
+                 <option value="neutral" selected>Нейтральная</option>
+                 <option value="negative">Отрицательная</option>
+              </select>
             </div>
             <textarea name="text" class="form-control mb-2" rows="3" placeholder="Текст рецензии"></textarea>
             <button type="submit" class="btn btn-primary">Отправить</button>
@@ -60,6 +59,13 @@
                 {% endif %}
                 <small class="text-muted">{{ review.created_at.strftime('%d.%m.%Y') }}</small>
                 {% if review.text %}<p class="mt-2 mb-0">{{ review.text }}</p>{% endif %}
+                {% if current_user.is_authenticated and current_user.is_admin %}
+                  <form method="POST" class="d-inline float-end">
+                  <input type="hidden" name="action" value="delete_review">
+                  <input type="hidden" name="review_id" value="{{ review.id }}">
+                  <button type="submit" class="btn btn-sm btn-danger">✕</button>
+                  </form>
+                {% endif %}
             </div>
         </div>
         {% else %}

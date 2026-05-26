@@ -110,6 +110,11 @@ def book_page(id):
                 db.session.add(status)
             db.session.commit()
             return redirect(url_for('book_page', id=id))
+        elif action == 'delete_review' and current_user.is_admin:
+            review = Review.query.get_or_404(request.form.get('review_id', type=int))
+            db.session.delete(review)
+            db.session.commit()
+            return redirect(url_for('book_page', id=id))
     your_review = current_user.is_authenticated and Review.query.filter_by(
         user_id=current_user.id, book_id=id
     ).first()

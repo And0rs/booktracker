@@ -7,15 +7,44 @@
 ### Требования
 
 - Python 3.10+
-- Docker
+- PostgreSQL (через Docker, Homebrew или apt)
 
 ### 1. Запустить PostgreSQL
+
+#### Вариант A — через Docker
 
 ```bash
 docker run --name booktracker-db \
   -e POSTGRES_PASSWORD=booktracker \
   -e POSTGRES_DB=booktracker \
   -p 5432:5432 -d postgres
+```
+
+#### Вариант B — установить PostgreSQL напрямую
+
+**Ubuntu/Debian:**
+```bash
+sudo apt install postgresql postgresql-contrib
+sudo systemctl start postgresql
+```
+
+**macOS (Homebrew):**
+```bash
+brew install postgresql@16
+brew services start postgresql@16
+```
+
+**Создать пользователя и базу:**
+```bash
+sudo -u postgres psql -c "CREATE USER postgres PASSWORD 'booktracker';"
+sudo -u postgres psql -c "CREATE DATABASE booktracker OWNER postgres;"
+# Если sudo нет (macOS) — пользователь postgres уже создан:
+psql -c "CREATE DATABASE booktracker;"
+```
+
+Перед следующим шагом убедись, что в `.env` указан правильный `DATABASE_URL`. По умолчанию:
+```
+DATABASE_URL=postgresql+psycopg://postgres:booktracker@localhost:5432/booktracker
 ```
 
 ### 2. Клонировать и настроить
@@ -31,8 +60,14 @@ cp .env.example .env
 
 ### 3. Инициализировать БД
 
+**Через Docker:**
 ```bash
 docker exec -i booktracker-db psql -U postgres -d booktracker < sql/create_db.sql
+```
+
+**Напрямую (Ubuntu/macOS):**
+```bash
+psql -U postgres -d booktracker < sql/create_db.sql
 ```
 
 ### 4. Запустить
@@ -47,8 +82,8 @@ python app.py
 
 | Логин | Пароль | Роль |
 |-------|--------|------|
-| bob | 1234567 | Администратор |
-| example | 123456 | Обычный пользователь |
+| example | 123456 | Администратор |
+| bob | 123456 | Обычный пользователь |
 
 ## Стек
 

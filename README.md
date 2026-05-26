@@ -26,25 +26,15 @@ docker run --name booktracker-db \
 ```bash
 sudo apt install postgresql postgresql-contrib
 sudo systemctl start postgresql
+sudo -u postgres psql -c "CREATE USER postgres PASSWORD 'booktracker';"
+sudo -u postgres psql -c "CREATE DATABASE booktracker OWNER postgres;"
 ```
 
 **macOS (Homebrew):**
 ```bash
 brew install postgresql@16
 brew services start postgresql@16
-```
-
-**Создать пользователя и базу:**
-```bash
-sudo -u postgres psql -c "CREATE USER postgres PASSWORD 'booktracker';"
-sudo -u postgres psql -c "CREATE DATABASE booktracker OWNER postgres;"
-# Если sudo нет (macOS) — пользователь postgres уже создан:
-psql -c "CREATE DATABASE booktracker;"
-```
-
-Перед следующим шагом убедись, что в `.env` указан правильный `DATABASE_URL`. По умолчанию:
-```
-DATABASE_URL=postgresql+psycopg://postgres:booktracker@localhost:5432/booktracker
+createdb booktracker    # суперпользователь = текущий пользователь
 ```
 
 ### 2. Клонировать и настроить
@@ -58,6 +48,17 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
+Отредактируй `.env` — в нём должен быть правильный `DATABASE_URL`:
+
+- **Docker / Ubuntu:**
+  ```
+  DATABASE_URL=postgresql+psycopg://postgres:booktracker@localhost:5432/booktracker
+  ```
+- **macOS:**
+  ```
+  DATABASE_URL=postgresql+psycopg://localhost:5432/booktracker
+  ```
+
 ### 3. Инициализировать БД
 
 **Через Docker:**
@@ -65,9 +66,14 @@ cp .env.example .env
 docker exec -i booktracker-db psql -U postgres -d booktracker < sql/create_db.sql
 ```
 
-**Напрямую (Ubuntu/macOS):**
+**Напрямую (Ubuntu):**
 ```bash
 psql -U postgres -d booktracker < sql/create_db.sql
+```
+
+**Напрямую (macOS):**
+```bash
+psql -d booktracker < sql/create_db.sql
 ```
 
 ### 4. Запустить

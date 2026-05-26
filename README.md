@@ -34,13 +34,13 @@ sudo -u postgres psql -c "CREATE DATABASE booktracker OWNER postgres;"
 ```bash
 brew install postgresql@16
 brew services start postgresql@16
-createdb booktracker    # суперпользователь = текущий пользователь
+createdb booktracker
 ```
 
 ### 2. Клонировать и настроить
 
 ```bash
-git clone <url>
+git clone git@github.com:And0rs/booktracker.git
 cd booktracker
 python3 -m venv venv
 source venv/bin/activate
